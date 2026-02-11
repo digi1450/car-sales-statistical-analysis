@@ -4,6 +4,8 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+sns.set_style("whitegrid")
+
 df = pd.read_csv("Carsale.csv")
 
 print(df.shape)
@@ -55,8 +57,7 @@ print(df["Transmission"].unique())
 print(df["Body Style"].unique())
 
 # EDA
-# Histrogram: price and frequency
-sns.set_style("whitegrid")
+# Histogram: price and frequency
 plt.figure(figsize=(10,6))
 sns.histplot(df["Price ($)"], bins=40, kde=True)
 plt.title("Distribution of Car Prices", fontsize=16)
@@ -66,7 +67,6 @@ plt.tight_layout()
 plt.show()
 
 # Histogram: Number of Cars Sold by Brand
-sns.set_style("whitegrid")
 plt.figure(figsize=(12,6))
 brand_counts = df["Company"].value_counts()
 sns.barplot(
@@ -91,9 +91,8 @@ sns.boxplot(x="Transmission", y="Price ($)", data=df)
 plt.title("Price Distribution by Transmission Type")
 plt.show()
 
-plt.figure(figsize=(10,6))
-
 # Boxplot Body vs Price
+plt.figure(figsize=(10,6))
 sns.boxplot(
     x="Body Style",
     y="Price ($)",
@@ -104,7 +103,6 @@ plt.title("Car Price by Body Style")
 plt.show()
 
 # Income vs Price
-sns.set_style("whitegrid")
 plt.figure(figsize=(8,6))
 
 sns.scatterplot(
