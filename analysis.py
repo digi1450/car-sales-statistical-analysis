@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 df = pd.read_csv("Carsale.csv")
 
@@ -50,9 +52,6 @@ print(df["Transmission"].unique())
 print(df["Body Style"].unique())
 
 # EDA
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # Histrogram price and frequency
 sns.set_style("whitegrid")
 plt.figure(figsize=(10,6))
