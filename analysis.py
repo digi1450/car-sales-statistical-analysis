@@ -31,14 +31,17 @@ print((df["Price ($)"] <= 0).sum())
 print("\nCheck negative income:")
 print((df["Annual Income"] <= 0).sum())
 
+def iqr_bounds(series, k=1.5):
+    s = series.dropna()
+    q1 = s.quantile(0.25)
+    q3 = s.quantile(0.75)
+    iqr = q3 - q1
+    lower = q1 - k * iqr
+    upper = q3 + k * iqr
+    return q1, q3, iqr, lower, upper
+
 # outlier check
-Q1 = df["Price ($)"].quantile(0.25)
-Q3 = df["Price ($)"].quantile(0.75)
-IQR = Q3 - Q1
-
-lower = Q1 - 1.5 * IQR
-upper = Q3 + 1.5 * IQR
-
+Q1, Q3, IQR, lower, upper = iqr_bounds(df["Price ($)"])
 outliers = df[(df["Price ($)"] < lower) | (df["Price ($)"] > upper)]
 print("Number of price outliers:", len(outliers))
 
@@ -52,7 +55,7 @@ print(df["Transmission"].unique())
 print(df["Body Style"].unique())
 
 # EDA
-# Histrogram price and frequency
+# Histrogram: price and frequency
 sns.set_style("whitegrid")
 plt.figure(figsize=(10,6))
 sns.histplot(df["Price ($)"], bins=40, kde=True)
@@ -62,7 +65,7 @@ plt.ylabel("Frequency", fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# Histrogram  Number of Cars Sold by Brand
+# Histogram: Number of Cars Sold by Brand
 sns.set_style("whitegrid")
 plt.figure(figsize=(12,6))
 brand_counts = df["Company"].value_counts()
@@ -168,11 +171,7 @@ for g in group_cols:
         print(grp.to_string())
 
 # 4) Flag price outliers using  (for transparency)
-Q1 = df["Price ($)"].quantile(0.25)
-Q3 = df["Price ($)"].quantile(0.75)
-IQR = Q3 - Q1
-lower = Q1 - 1.5 * IQR
-upper = Q3 + 1.5 * IQR
+Q1, Q3, IQR, lower, upper = iqr_bounds(df["Price ($)"])
 
 df["Price_Outlier_IQR"] = (df["Price ($)"] < lower) | (df["Price ($)"] > upper)
 
@@ -200,8 +199,8 @@ margin_error = t_critical * std_price / np.sqrt(n)
 ci_lower = mean_price - margin_error
 ci_upper = mean_price + margin_error
 
-print("Mean price:", mean_price)
-print("95% CI:", (ci_lower, ci_upper))
+print(f"Mean price: {mean_price:.2f}")
+print(f"95% CI for mean price: ({ci_lower:.2f}, {ci_upper:.2f})")
 #2) T-test: Price by Transmission
 auto_price = df[df["Transmission"] == "Auto"]["Price ($)"].dropna()
 manual_price = df[df["Transmission"] == "Manual"]["Price ($)"].dropna()
@@ -212,6 +211,9 @@ print(f"Auto mean price: {auto_price.mean():.2f}")
 print(f"Manual mean price: {manual_price.mean():.2f}")
 print(f"t-statistic: {t_stat:.4f}")
 print(f"p-value: {p_value:.6f}")
+
+print("H0: mean price (Auto) = mean price (Manual)")
+print("H1: mean price (Auto) != mean price (Manual)")
 
 alpha = 0.05
 if p_value < alpha:
